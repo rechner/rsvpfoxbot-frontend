@@ -1,0 +1,213 @@
+{% extends "main.html" %}
+{% block title %}Symptoms Check{% endblock %}
+
+{% block body %}
+  <!-- CONTAINER -->
+  <div class="container d-flex align-items-center min-vh-100">
+    <div class="row g-0 justify-content-center">
+      <!-- TITLE -->
+      <div class="col-lg-4 offset-lg-1 mx-0 px-0">
+        <div id="title-container">
+          <tgs-player autoplay loop mode="normal" src="{{ url_for('static', filename='img/corvo.tgs') }}" class="covid-image"></tgs-player>
+          <h2>COVID-19</h2>
+          <h3>Daily Symptoms Check-In</h3>
+          <p>
+            As part of keeping everyone safe, this check-in will evaluate your risk and help identify people who may
+            have COVID-19 as early as possible.
+          </p>
+        </div>
+      </div>
+      {% set symptom_questions = [
+            "Fever over 38°C (100.4°F)",
+            "Intense shivering or chills",
+            "Cough",
+            "Shortness of breath or difficulty breathing",
+            "Unusual fatigue",
+            "Muscle or body aches",
+            "Unusual headache",
+            "New loss of taste or smell",
+            "Sore throat",
+            "Congestion or runny nose",
+            "Nausea or vomiting",
+            "Diarrhea",
+          ]
+      %}
+
+      <!-- FORMS -->
+      <div class="col-lg-7 mx-0 px-0">
+        <div class="progress">
+          <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50"
+               class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar"
+               style="width: 0%"></div>
+        </div>
+        <div id="qbox-container">
+          <form class="needs-validation" id="form-wrapper" method="post" name="form-wrapper" novalidate="">
+            <div id="steps-container">
+              <div class="step">
+                <h4>
+                  Welcome to the pre-party.
+                </h4>
+
+                <p>
+                  Please complete this form the same day as the event.<br><br>
+
+                  Your exact responses won't be saved, only the final evaluation (low, medium, or high risk)
+                  is submitted and retained for 24 hours.
+                </p>
+              </div>
+              <div class="step">
+                <h4>
+                  Do you have any new symptoms that aren’t related to an existing medical condition
+                  (e.g. migraines, seasonal allergies) or activity (e.g. yard work)?
+                </h4>
+                <p>Check all that apply.</p>
+                <div>
+                  {% for question in symptom_questions %}
+                    <div class="form-check ps-0 q-box">
+                      <div class="q-box__question">
+                        <input class="form-check-input question__input q-checkbox" id="q_1_{{ loop.index }}" name="q_1"
+                               type="checkbox" value="1">
+                        <label class="form-check-label question__label" for="q_1_{{ loop.index }}">{{ question }}</label>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="step">
+                <h4>
+                  In the last 10 days, have you had close-contact with someone with symptoms of COVID-19 or a known
+                  COVID-19 infection?
+                </h4>
+                <p>
+                  Close contact is within 2 meters (6 feet) for a total of 15 minutes or more over a 24-hour period,
+                  without a well-fitting surgical or N95 mask.
+                </p>
+                <div class="form-check ps-0 q-box">
+                  <div class="q-box__question">
+                    <input class="form-check-input question__input" id="q_2_yes" name="q_2" type="radio" value="Yes">
+                    <label class="form-check-label question__label" for="q_2_yes">Yes</label>
+                  </div>
+                  <div class="q-box__question">
+                    <input checked class="form-check-input question__input" id="q_2_no" name="q_2" type="radio"value="No">
+                    <label class="form-check-label question__label" for="q_2_no">No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <h4>In the last 5 days, have you been tested for COVID-19?</h4>
+                <div class="form-check ps-0 q-box">
+                  <div class="q-box__question">
+                    <input class="form-check-input question__input" id="q_3_positive" name="q_3" type="radio" value="Positive">
+                    <label class="form-check-label question__label" for="q_3_positive">
+                      I have been tested in the last 5 days, and my result was positive.
+                    </label>
+                  </div>
+                  <div class="q-box__question">
+                    <input class="form-check-input question__input" id="q_3_negative" name="q_3" type="radio" value="Negative">
+                    <label class="form-check-label question__label" for="q_3_negative">
+                      I have been tested in the last 5 days, and my result was negative.
+                    </label>
+                  </div>
+                  <div class="q-box__question">
+                    <input class="form-check-input question__input" id="q_3_waiting" name="q_3" type="radio" value="Waiting">
+                    <label class="form-check-label question__label" for="q_3_waiting">
+                      I have been tested in the last 5 days, and I am waiting for results.
+                    </label>
+                  </div>
+                  <div class="q-box__question">
+                    <input checked class="form-check-input question__input" id="q_3_untested" name="q_3" type="radio" value="Untested">
+                    <label class="form-check-label question__label" for="q_3_untested">
+                      I have not been tested.
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div id="risk-low" class="row d-none">
+                  <div class="col-sm-2">
+                    <i class="bi bi-shield-fill-check text-success risk-icon"></i>
+                  </div>
+                  <div class="col-sm">
+                    <h4>Your COVID-19 risk factors are <span class="text-success"><b>low</b></span>.</h4>
+                    <p>
+                      Your risk is low based on your responses, though you may still be asked to complete a rapid test
+                      before entering the venue.
+                    </p>
+                  </div>
+                </div>
+
+                <div id="risk-medium" class="row d-none">
+                  <div class="col-sm-2">
+                    <i class="bi bi-shield-fill-check text-warning risk-icon"></i>
+                  </div>
+                  <div class="col-sm">
+                    <h4>Your COVID-19 risk factors are <span class="text-warning"><b>medium</b></span>.</h4>
+                  </div>
+                  <p>
+                    Your risk is elevated based on one or more of your responses, so you should take a rapid test before
+                    we see you inside.
+                  </p>
+                </div>
+
+                <div id="risk-high" class="row d-none">
+                  <div class="col-sm-2">
+                    <i class="bi bi-shield-fill-check text-danger risk-icon"></i>
+                  </div>
+                  <div class="col-sm">
+                    <h4>Your COVID-19 risk factors are <span class="text-danger"><b>high</b></span>.</h4>
+                  </div>
+                  <p>
+                    Your risk is elevated based on one or more of your responses, so you should take a rapid test before
+                    we see you inside.
+                  </p>
+                </div>
+              </div>
+              <div class="step">
+                <div class="mt-1">
+                  <div class="closing-text">
+                    <h4>One last step</h4>
+                    <p></p>
+                    <p>
+                      Click "Login with Telegram" to submit your risk evaluation.  Your risk evaluation and Telegram ID
+                      will only be stored for 24 hours, and only be visible to venue hosts at parties you've RSVP'ed /yes
+                      for with <a href="https://t.me/rsvpfoxbot">@RSVPFoxBot</a>.
+                    </p>
+                    <div class="row">
+                      <div class="col align-self-center">
+                        <script async src="https://telegram.org/js/telegram-widget.js?19" data-telegram-login="RSVPFoxBot" data-size="large" data-radius="5" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="success">
+                <div class="mt-5">
+                  <h4>Success!  Stay healthy!</h4>
+                  <p>Clean your hands often, use soap and water, or an alcohol-based hand rub, maintain a
+                    safe distance from anyone who is coughing or sneezing and always wear a mask when physical
+                    distancing is not possible.</p>
+                  <a class="back-link" href="">Go back from the beginning ➜</a>
+                </div>
+              </div>
+            </div>
+            <div id="q-box__buttons">
+              <button id="prev-btn" type="button">Previous</button>
+              <button id="next-btn" type="button">Next</button>
+              <button id="submit-btn" type="button">Finish</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div><!-- PRELOADER -->
+  <div id="preloader-wrapper">
+    <div id="preloader"></div>
+    <div class="preloader-section section-left"></div>
+    <div class="preloader-section section-right"></div>
+  </div>
+  <script src="{{ url_for('static', filename='js/symptoms-check.js') }}"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/tgs-player.js"></script>
+
+{% endblock %}
