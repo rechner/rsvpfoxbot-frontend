@@ -7,8 +7,8 @@ from influxdb import InfluxDBClient
 
 app = Flask(__name__)
 db_client = InfluxDBClient(os.environ.get("INFLUX_HOST", "localhost"))
-db_client.create_database("covid_check")
-db_client.create_retention_policy("covid_check", "1d", 1, "covid_check", True)
+#db_client.create_database("covid_check")
+#db_client.create_retention_policy("covid_check", "1d", 1, "covid_check", True)
 
 @app.route('/')
 def index():  # put application's code here
